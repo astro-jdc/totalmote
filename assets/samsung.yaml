@@ -13,6 +13,7 @@ connection:
   ping_interval_seconds: 15
   requires_ssl: true
   ignore_ssl_cert: true  # Samsung uses self-signed certificates
+  uri_template: '{protocol}://{ip}:{port}{path}?name={app_name_base64}'
 
 authentication:
   type: basic

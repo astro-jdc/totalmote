@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class TVConfig {
   final String brand;
   final String modelName;
@@ -53,6 +55,7 @@ class ConnectionConfig {
   final int port;
   final int? fallbackPort;
   final String? path;
+  final String? uriTemplate;
   final int timeoutSeconds;
   final int? pingIntervalSeconds;
   final bool requiresSsl;
@@ -63,6 +66,7 @@ class ConnectionConfig {
     required this.port,
     this.fallbackPort,
     this.path,
+    this.uriTemplate,
     required this.timeoutSeconds,
     this.pingIntervalSeconds,
     required this.requiresSsl,
@@ -75,11 +79,34 @@ class ConnectionConfig {
       port: yaml['port'] as int,
       fallbackPort: yaml['fallback_port'] as int?,
       path: yaml['path'] as String?,
+      uriTemplate: yaml['uri_template'] as String?,
       timeoutSeconds: yaml['timeout_seconds'] as int,
       pingIntervalSeconds: yaml['ping_interval_seconds'] as int?,
       requiresSsl: yaml['requires_ssl'] as bool? ?? false,
       ignoreSslCert: yaml['ignore_ssl_cert'] as bool? ?? false,
     );
+  }
+
+  String buildUri({ required String ipAddress, String? appName,}) {
+    if (uriTemplate != null && uriTemplate!.isNotEmpty) {
+      // Use template
+      String uri = uriTemplate!
+          .replaceAll('{protocol}', protocol)
+          .replaceAll('{ip}', ipAddress)
+          .replaceAll('{port}', port.toString())
+          .replaceAll('{path}', path ?? '');
+
+      // Handle app name encoding if needed
+      if (appName != null && uri.contains('{app_name_base64}')) {
+        final encodedName = base64.encode(utf8.encode(appName));
+        uri = uri.replaceAll('{app_name_base64}', encodedName);
+      }
+
+      return uri;
+    }
+
+    // Fallback to manual construction
+    return '$protocol://$ipAddress:$port${path ?? ''}';
   }
 }
 

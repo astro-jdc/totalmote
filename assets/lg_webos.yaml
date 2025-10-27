@@ -13,6 +13,7 @@ connection:
   ping_interval_seconds: 15
   requires_ssl: false
   ignore_ssl_cert: false
+  uri_template: '{protocol}://{ip}:{port}{path}'
 
 authentication:
   type: registration

@@ -9,6 +9,7 @@ connection:
   port: 5555
   timeout_seconds: 10
   requires_developer_mode: true
+  uri_template: '{ip}:{port}'
 
 authentication:
   type: adb

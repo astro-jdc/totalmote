@@ -128,14 +128,11 @@ class GenericTVService {
     final port = config.connection.port;
     final path = config.connection.path ?? '';
 
-    String uriString;
-    if (config.brand == 'Samsung') {
-      String base64Name = base64.encode(utf8.encode(appName));
-      uriString = '$protocol://$ipAddress:$port$path?name="$base64Name"';
-    } else {
-      uriString = '$protocol://$ipAddress:$port$path';
-    }
-
+    // Build URI using template from config
+    final uriString = config.connection.buildUri(
+      ipAddress: ipAddress,
+      appName: appName,
+    );
     final Uri uri = Uri.parse(uriString);
 
     onStatusChanged?.call('Connecting...');

@@ -60,12 +60,7 @@ class TVConfigLoader {
               .replaceFirst('assets/', '')
               .replaceFirst('.yaml', '');
 
-          // Exclude non-TV config files (like tizen_os_samsung.yaml)
-          if (filename == 'samsung' ||
-              filename == 'lg_webos' ||
-              filename == 'android_tv') {
-            brands.add(filename);
-          }
+          brands.add(filename);
         }
       }
 
@@ -77,7 +72,7 @@ class TVConfigLoader {
     } catch (e) {
       logger.e('Failed to load available brands', error: e);
       // Fallback to hardcoded list
-      return ['samsung', 'lg_webos', 'android_tv'];
+      return ['No config files found'];
     }
   }
 

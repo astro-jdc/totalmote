@@ -9,6 +9,7 @@ import '../widgets/control_buttons_card.dart';
 import '../widgets/media_controls_card.dart';
 import '../widgets/remote_button.dart';
 import '../utils/app_logger.dart';
+import '../utils/app_preferences.dart';
 
 class RemoteControlScreen extends StatefulWidget {
   const RemoteControlScreen({Key? key}) : super(key: key);
@@ -44,7 +45,33 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
         _availableBrands = brands;
         _isLoadingBrands = false;
       });
-      // Initialize with the first brand
+
+      // Load last used TV configuration
+      if (AppPreferences.hasSavedTV()) {
+        final lastBrand = AppPreferences.getLastTVBrand()!;
+        final lastIP = AppPreferences.getLastTVIP()!;
+        final lastName = AppPreferences.getLastTVName();
+
+        if (brands.contains(lastBrand)) {
+          setState(() {
+            _selectedBrand = lastBrand;
+            _ipController.text = lastIP;
+            if (lastName != null) {
+              _tvName = lastName;
+            }
+            _statusMessage = 'Loaded last used: ${lastBrand.toUpperCase()}';
+          });
+
+          // Initialize the service
+          await _onBrandChanged(lastBrand);
+
+          // Show option to reconnect
+          _showReconnectDialog(lastBrand, lastIP);
+          return;
+        }
+      }
+
+      // No saved config, use first brand
       if (brands.isNotEmpty) {
         _onBrandChanged(brands.first);
       }
@@ -55,6 +82,37 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
         _statusMessage = 'Failed to load TV configurations';
       });
     }
+  }
+
+  void _showReconnectDialog(String brand, String ip) {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Reconnect to Last TV?'),
+          content: Text(
+            'Would you like to reconnect to:\n\n'
+                'Brand: ${brand.toUpperCase()}\n'
+                'IP: $ip',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Not Now'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _connectToTV(ip);
+              },
+              child: const Text('Connect'),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Future<void> _onBrandChanged(String brand) async {
@@ -189,6 +247,15 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
       _tvName = '${_selectedBrand.toUpperCase()} TV ($ipAddress)';
     });
     await _tvService!.connectToTV(ipAddress, _tvName);
+
+    // Save successful connection
+    if (_tvService!.isConnected) {
+      await AppPreferences.saveLastTV(
+        brand: _selectedBrand,
+        ipAddress: ipAddress,
+        tvName: _tvName,
+      );
+    }
   }
 
   void _disconnectFromTV() {
@@ -275,6 +342,17 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
         title: const Text('Totalmote - Universal TV Remote'),
         centerTitle: true,
         actions: [
+          if (AppPreferences.hasSavedTV() && !_isConnected)
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              onPressed: () async {
+                await AppPreferences.clearLastTV();
+                setState(() {
+                  _statusMessage = 'Cleared saved TV configuration';
+                });
+              },
+              tooltip: 'Forget Last TV',
+            ),
           if (_isConnected)
             IconButton(
               icon: const Icon(Icons.power_settings_new),
