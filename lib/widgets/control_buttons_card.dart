@@ -24,17 +24,17 @@ class ControlButtonsCard extends StatelessWidget {
                 RemoteButton(
                   icon: Icons.arrow_back,
                   label: 'Back',
-                  onPressed: () => onSendKey('KEY_RETURN'),
+                  onPressed: () => onSendKey('back'),
                 ),
                 RemoteButton(
                   icon: Icons.home,
                   label: 'Home',
-                  onPressed: () => onSendKey('KEY_HOME'),
+                  onPressed: () => onSendKey('home'),
                 ),
                 RemoteButton(
                   icon: Icons.menu,
                   label: 'Menu',
-                  onPressed: () => onSendKey('KEY_MENU'),
+                  onPressed: () => onSendKey('menu'),
                 ),
               ],
             ),
@@ -45,17 +45,17 @@ class ControlButtonsCard extends StatelessWidget {
                 RemoteButton(
                   icon: Icons.volume_down,
                   label: 'Vol-',
-                  onPressed: () => onSendKey('KEY_VOLDOWN'),
+                  onPressed: () => onSendKey('volume_down'),
                 ),
                 RemoteButton(
                   icon: Icons.volume_mute,
                   label: 'Mute',
-                  onPressed: () => onSendKey('KEY_MUTE'),
+                  onPressed: () => onSendKey('mute'),
                 ),
                 RemoteButton(
                   icon: Icons.volume_up,
                   label: 'Vol+',
-                  onPressed: () => onSendKey('KEY_VOLUP'),
+                  onPressed: () => onSendKey('volume_up'),
                 ),
               ],
             ),
@@ -66,17 +66,17 @@ class ControlButtonsCard extends StatelessWidget {
                 RemoteButton(
                   icon: Icons.arrow_upward,
                   label: 'Ch+',
-                  onPressed: () => onSendKey('KEY_CHUP'),
+                  onPressed: () => onSendKey('channel_up'),
                 ),
                 RemoteButton(
                   icon: Icons.arrow_downward,
                   label: 'Ch-',
-                  onPressed: () => onSendKey('KEY_CHDOWN'),
+                  onPressed: () => onSendKey('channel_down'),
                 ),
                 RemoteButton(
                   icon: Icons.input,
                   label: 'Source',
-                  onPressed: () => onSendKey('KEY_SOURCE'),
+                  onPressed: () => onSendKey('source'),
                 ),
               ],
             ),

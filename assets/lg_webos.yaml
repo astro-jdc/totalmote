@@ -1,0 +1,95 @@
+# LG WebOS TV Configuration
+brand: LG
+model_name: LG WebOS TV
+protocol: websocket
+description: LG Smart TV with WebOS API
+
+connection:
+  protocol: ws  # Plain WebSocket (not secure)
+  port: 3000
+  fallback_port: 3001
+  path: /
+  timeout_seconds: 10
+  ping_interval_seconds: 15
+  requires_ssl: false
+  ignore_ssl_cert: false
+
+authentication:
+  type: registration
+  requires_pairing: true
+  pairing_prompt_on_tv: true
+  client_key_storage: true  # Store client key for future connections
+
+scan:
+  ports:
+    - 3000
+    - 3001
+  timeout_ms: 500
+
+# Registration payload
+registration:
+  type: register
+  id: register_0
+  payload:
+    forcePairing: false
+    pairingType: PROMPT
+    manifest:
+      manifestVersion: 1
+      appVersion: 1.0.0
+
+# Command structure
+commands:
+  button:
+    type: request
+    id: "button_{timestamp}"
+    uri: "{uri}"
+
+  text_input:
+    type: request
+    id: "text_{timestamp}"
+    uri: ssap://com.webos.service.ime/insertText
+    payload:
+      text: "{text}"
+      replace: 0
+
+# Key mappings to WebOS URIs
+keys:
+  # Power
+  power: ssap://system/turnOff
+  power_off: ssap://system/turnOff
+
+  # Navigation - LG uses special button API
+  up: ssap://com.webos.service.ime/sendEnterKey
+  down: ssap://com.webos.service.ime/sendEnterKey
+  left: ssap://com.webos.service.ime/sendEnterKey
+  right: ssap://com.webos.service.ime/sendEnterKey
+  enter: ssap://com.webos.service.ime/sendEnterKey
+  ok: ssap://com.webos.service.ime/sendEnterKey
+  back: ssap://system/back
+
+  # Menu
+  home: ssap://system.launcher/launch
+  menu: ssap://system.launcher/open
+
+  # Volume
+  volume_up: ssap://audio/volumeUp
+  volume_down: ssap://audio/volumeDown
+  mute: ssap://audio/setMute
+
+  # Channel
+  channel_up: ssap://tv/channelUp
+  channel_down: ssap://tv/channelDown
+
+  # Media
+  play: ssap://media.controls/play
+  pause: ssap://media.controls/pause
+  stop: ssap://media.controls/stop
+  rewind: ssap://media.controls/rewind
+  fast_forward: ssap://media.controls/fastForward
+
+features:
+  supports_text_input: true
+  supports_mouse: true
+  supports_voice: false
+  supports_apps: true
+  supports_power_on: false

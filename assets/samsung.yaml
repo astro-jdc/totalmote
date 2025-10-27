@@ -1,0 +1,124 @@
+# Samsung Smart TV Configuration
+brand: Samsung
+model_name: Samsung Smart TV
+protocol: websocket
+description: Samsung Smart TV with WebSocket Remote Control API
+
+connection:
+  protocol: wss  # WebSocket Secure
+  port: 8002
+  fallback_port: 8001
+  path: /api/v2/channels/samsung.remote.control
+  timeout_seconds: 10
+  ping_interval_seconds: 15
+  requires_ssl: true
+  ignore_ssl_cert: true  # Samsung uses self-signed certificates
+
+authentication:
+  type: basic
+  app_name_encoding: base64
+  requires_pairing: false
+  pairing_prompt_on_tv: true
+
+scan:
+  ports:
+    - 8001
+    - 8002
+  timeout_ms: 500
+
+# Command structure for sending keys
+commands:
+  remote_key:
+    method: ms.remote.control
+    params:
+      Cmd: Click
+      DataOfCmd: "{key}"
+      Option: "false"
+      TypeOfRemote: SendRemoteKey
+  
+  text_input:
+    method: ms.remote.control
+    params:
+      Cmd: Click
+      DataOfCmd: "{text_base64}"
+      Option: "false"
+      TypeOfRemote: SendInputString
+
+# Key mappings
+keys:
+  # Power
+  power: KEY_POWER
+  power_off: KEY_POWEROFF
+  power_on: KEY_POWERON
+  
+  # Navigation
+  up: KEY_UP
+  down: KEY_DOWN
+  left: KEY_LEFT
+  right: KEY_RIGHT
+  enter: KEY_ENTER
+  ok: KEY_ENTER
+  select: KEY_ENTER
+  back: KEY_RETURN
+  return: KEY_RETURN
+  
+  # Menu
+  home: KEY_HOME
+  menu: KEY_MENU
+  tools: KEY_TOOLS
+  info: KEY_INFO
+  guide: KEY_GUIDE
+  exit: KEY_EXIT
+  
+  # Volume
+  volume_up: KEY_VOLUP
+  volume_down: KEY_VOLDOWN
+  mute: KEY_MUTE
+  
+  # Channel
+  channel_up: KEY_CHUP
+  channel_down: KEY_CHDOWN
+  previous_channel: KEY_PRECH
+  channel_list: KEY_CH_LIST
+  
+  # Numbers
+  num_0: KEY_0
+  num_1: KEY_1
+  num_2: KEY_2
+  num_3: KEY_3
+  num_4: KEY_4
+  num_5: KEY_5
+  num_6: KEY_6
+  num_7: KEY_7
+  num_8: KEY_8
+  num_9: KEY_9
+  
+  # Media
+  play: KEY_PLAY
+  pause: KEY_PAUSE
+  stop: KEY_STOP
+  play_pause: KEY_PLAYPAUSE
+  rewind: KEY_REWIND
+  fast_forward: KEY_FF
+  record: KEY_REC
+  
+  # Color buttons
+  red: KEY_RED
+  green: KEY_GREEN
+  yellow: KEY_YELLOW
+  blue: KEY_BLUE
+  
+  # Source
+  source: KEY_SOURCE
+  hdmi: KEY_HDMI
+  hdmi1: KEY_HDMI1
+  hdmi2: KEY_HDMI2
+  hdmi3: KEY_HDMI3
+  hdmi4: KEY_HDMI4
+
+features:
+  supports_text_input: true
+  supports_mouse: false
+  supports_voice: false
+  supports_apps: false
+  supports_power_on: false  # Most Samsung TVs don't support power on via network

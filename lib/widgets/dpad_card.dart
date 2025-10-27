@@ -20,7 +20,7 @@ class DPadCard extends StatelessWidget {
           children: [
             RemoteButton(
               icon: Icons.keyboard_arrow_up,
-              onPressed: () => onSendKey('KEY_UP'),
+              onPressed: () => onSendKey('up'),
             ),
             const SizedBox(height: 12),
             Row(
@@ -28,27 +28,27 @@ class DPadCard extends StatelessWidget {
               children: [
                 RemoteButton(
                   icon: Icons.keyboard_arrow_left,
-                  onPressed: () => onSendKey('KEY_LEFT'),
+                  onPressed: () => onSendKey('left'),
                 ),
                 const SizedBox(width: 12),
                 RemoteButton(
                   icon: Icons.circle,
                   label: 'OK',
                   size: 80,
-                  onPressed: () => onSendKey('KEY_ENTER'),
+                  onPressed: () => onSendKey('enter'),
                   color: Colors.blue[800]!,
                 ),
                 const SizedBox(width: 12),
                 RemoteButton(
                   icon: Icons.keyboard_arrow_right,
-                  onPressed: () => onSendKey('KEY_RIGHT'),
+                  onPressed: () => onSendKey('right'),
                 ),
               ],
             ),
             const SizedBox(height: 12),
             RemoteButton(
               icon: Icons.keyboard_arrow_down,
-              onPressed: () => onSendKey('KEY_DOWN'),
+              onPressed: () => onSendKey('down'),
             ),
           ],
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/tv_service.dart';
+import '../services/generic_tv_service.dart';
+import '../services/tv_service_factory.dart';
 import '../models/tv_device.dart';
 import '../widgets/connection_card.dart';
 import '../widgets/text_input_card.dart';
@@ -7,6 +8,7 @@ import '../widgets/dpad_card.dart';
 import '../widgets/control_buttons_card.dart';
 import '../widgets/media_controls_card.dart';
 import '../widgets/remote_button.dart';
+import '../utils/app_logger.dart';
 
 class RemoteControlScreen extends StatefulWidget {
   const RemoteControlScreen({Key? key}) : super(key: key);
@@ -17,27 +19,74 @@ class RemoteControlScreen extends StatefulWidget {
 
 class _RemoteControlScreenState extends State<RemoteControlScreen> {
   final TextEditingController _ipController = TextEditingController();
-  final TVService _tvService = TVService();
+  GenericTVService? _tvService;
   bool _isConnected = false;
   String _statusMessage = 'Not connected';
   String _tvName = '';
   bool _isScanning = false;
   List<TVDevice> _discoveredTVs = [];
 
+  // TV Brand selection
+  String _selectedBrand = 'samsung';
+  List<String> _availableBrands = [];
+  bool _isLoadingBrands = true;
+
   @override
   void initState() {
     super.initState();
-    _setupTVService();
+    _loadAvailableBrands();
   }
 
-  void _setupTVService() {
-    _tvService.onStatusChanged = (message) {
+  Future<void> _loadAvailableBrands() async {
+    try {
+      final brands = await TVServiceFactory.getSupportedBrands();
+      setState(() {
+        _availableBrands = brands;
+        _isLoadingBrands = false;
+      });
+      // Initialize with the first brand
+      if (brands.isNotEmpty) {
+        _onBrandChanged(brands.first);
+      }
+    } catch (e) {
+      logger.e('Failed to load TV brands', error: e);
+      setState(() {
+        _isLoadingBrands = false;
+        _statusMessage = 'Failed to load TV configurations';
+      });
+    }
+  }
+
+  Future<void> _onBrandChanged(String brand) async {
+    setState(() {
+      _selectedBrand = brand;
+      _statusMessage = 'Loading ${brand.toUpperCase()} configuration...';
+    });
+
+    try {
+      final service = await TVServiceFactory.createService(brand);
+      _setupTVService(service);
+      setState(() {
+        _statusMessage = 'Ready to connect to ${brand.toUpperCase()} TV';
+      });
+    } catch (e) {
+      logger.e('Failed to load $brand service', error: e);
+      setState(() {
+        _statusMessage = 'Error loading $brand configuration';
+      });
+    }
+  }
+
+  void _setupTVService(GenericTVService service) {
+    _tvService = service;
+
+    service.onStatusChanged = (message) {
       setState(() {
         _statusMessage = message;
       });
     };
 
-    _tvService.onConnectionChanged = (connected) {
+    service.onConnectionChanged = (connected) {
       setState(() {
         _isConnected = connected;
       });
@@ -45,13 +94,20 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
   }
 
   Future<void> scanForTVs() async {
+    if (_tvService == null) {
+      setState(() {
+        _statusMessage = 'Please select a TV brand first';
+      });
+      return;
+    }
+
     setState(() {
       _isScanning = true;
       _discoveredTVs.clear();
       _statusMessage = 'Scanning network for TVs...';
     });
 
-    _discoveredTVs = await _tvService.scanForTVs((progress) {
+    _discoveredTVs = await _tvService!.scanForTVs((progress) {
       setState(() {
         _statusMessage = progress;
       });
@@ -75,7 +131,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Select TV'),
+        title: Text('Select ${_selectedBrand.toUpperCase()} TV'),
         content: SizedBox(
           width: double.maxFinite,
           child: _discoveredTVs.isEmpty
@@ -92,7 +148,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
               return ListTile(
                 leading: const Icon(Icons.tv, color: Colors.blue),
                 title: Text(tv.name),
-                subtitle: Text(tv.ipAddress),
+                subtitle: Text('${tv.ipAddress}:${tv.port}'),
                 trailing: const Icon(Icons.arrow_forward),
                 onTap: () {
                   _ipController.text = tv.ipAddress;
@@ -122,26 +178,33 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
   }
 
   Future<void> _connectToTV(String ipAddress) async {
+    if (_tvService == null) {
+      setState(() {
+        _statusMessage = 'Please select a TV brand first';
+      });
+      return;
+    }
+
     setState(() {
-      _tvName = 'Samsung TV ($ipAddress)';
+      _tvName = '${_selectedBrand.toUpperCase()} TV ($ipAddress)';
     });
-    await _tvService.connectToTV(ipAddress, _tvName);
+    await _tvService!.connectToTV(ipAddress, _tvName);
   }
 
   void _disconnectFromTV() {
-    _tvService.disconnect();
+    _tvService?.disconnect();
     setState(() {
       _tvName = '';
     });
   }
 
   void _sendKey(String key) {
-    _tvService.sendKey(key);
+    _tvService?.sendKey(key);
   }
 
   void _sendText(String text) {
     try {
-      _tvService.sendText(text);
+      _tvService?.sendText(text);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Sent text: $text'),
@@ -200,7 +263,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
 
   @override
   void dispose() {
-    _tvService.dispose();
+    _tvService?.dispose();
     _ipController.dispose();
     super.dispose();
   }
@@ -209,7 +272,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Totalmote - Samsung TV Remote'),
+        title: const Text('Totalmote - Universal TV Remote'),
         centerTitle: true,
         actions: [
           if (_isConnected)
@@ -224,6 +287,53 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            // TV Brand Selector
+            Card(
+              elevation: 4,
+              color: const Color(0xFF16213e),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'TV Brand',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    if (_isLoadingBrands)
+                      const Center(child: CircularProgressIndicator())
+                    else
+                      DropdownButtonFormField<String>(
+                        value: _selectedBrand,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.tv),
+                        ),
+                        items: _availableBrands.map((brand) {
+                          return DropdownMenuItem(
+                            value: brand,
+                            child: Text(brand.toUpperCase()),
+                          );
+                        }).toList(),
+                        onChanged: _isConnected
+                            ? null
+                            : (value) {
+                          if (value != null) {
+                            _onBrandChanged(value);
+                          }
+                        },
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Connection Card
             ConnectionCard(
               ipController: _ipController,
               isConnected: _isConnected,
@@ -234,20 +344,30 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
               onConnect: () => _connectToTV(_ipController.text),
             ),
             const SizedBox(height: 16),
+
+            // Text Input
             TextInputCard(onShowDialog: _showTextInputDialog),
             const SizedBox(height: 16),
+
+            // Power Button
             RemoteButton(
               icon: Icons.power_settings_new,
               label: 'Power',
-              onPressed: () => _sendKey('KEY_POWER'),
+              onPressed: () => _sendKey('power'),
               size: 70,
               color: Colors.red[700]!,
             ),
             const SizedBox(height: 24),
+
+            // D-Pad
             DPadCard(onSendKey: _sendKey),
             const SizedBox(height: 16),
+
+            // Control Buttons
             ControlButtonsCard(onSendKey: _sendKey),
             const SizedBox(height: 16),
+
+            // Media Controls
             MediaControlsCard(onSendKey: _sendKey),
             const SizedBox(height: 24),
           ],

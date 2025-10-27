@@ -1,0 +1,84 @@
+# Android TV Configuration (Engy, Sony, Philips, etc.)
+brand: Android TV
+model_name: Android TV
+protocol: adb
+description: Android TV with ADB Remote Control
+
+connection:
+  protocol: adb
+  port: 5555
+  timeout_seconds: 10
+  requires_developer_mode: true
+
+authentication:
+  type: adb
+  requires_pairing: true
+  pairing_prompt_on_tv: false
+
+scan:
+  ports:
+    - 5555
+  timeout_ms: 1000
+
+# ADB command structure
+commands:
+  button:
+    command: shell input keyevent {keycode}
+
+  text_input:
+    command: shell input text "{text}"
+
+# Key mappings to Android keycodes
+keys:
+  # Power
+  power: 26  # KEYCODE_POWER
+
+  # Navigation
+  up: 19  # KEYCODE_DPAD_UP
+  down: 20  # KEYCODE_DPAD_DOWN
+  left: 21  # KEYCODE_DPAD_LEFT
+  right: 22  # KEYCODE_DPAD_RIGHT
+  enter: 23  # KEYCODE_DPAD_CENTER
+  ok: 23
+  select: 23
+  back: 4  # KEYCODE_BACK
+
+  # Menu
+  home: 3  # KEYCODE_HOME
+  menu: 82  # KEYCODE_MENU
+
+  # Volume
+  volume_up: 24  # KEYCODE_VOLUME_UP
+  volume_down: 25  # KEYCODE_VOLUME_DOWN
+  mute: 164  # KEYCODE_VOLUME_MUTE
+
+  # Channel
+  channel_up: 166  # KEYCODE_CHANNEL_UP
+  channel_down: 167  # KEYCODE_CHANNEL_DOWN
+
+  # Media
+  play: 126  # KEYCODE_MEDIA_PLAY
+  pause: 127  # KEYCODE_MEDIA_PAUSE
+  stop: 86  # KEYCODE_MEDIA_STOP
+  rewind: 89  # KEYCODE_MEDIA_REWIND
+  fast_forward: 90  # KEYCODE_MEDIA_FAST_FORWARD
+  play_pause: 85  # KEYCODE_MEDIA_PLAY_PAUSE
+
+  # Numbers
+  num_0: 7
+  num_1: 8
+  num_2: 9
+  num_3: 10
+  num_4: 11
+  num_5: 12
+  num_6: 13
+  num_7: 14
+  num_8: 15
+  num_9: 16
+
+features:
+  supports_text_input: true
+  supports_mouse: true
+  supports_voice: false
+  supports_apps: true
+  supports_power_on: false
