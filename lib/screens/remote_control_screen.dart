@@ -28,7 +28,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
   List<TVDevice> _discoveredTVs = [];
 
   // TV Brand selection
-  String _selectedBrand = 'samsung';
+  String? _selectedBrand;
   List<String> _availableBrands = [];
   bool _isLoadingBrands = true;
 
@@ -73,6 +73,9 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
 
       // No saved config, use first brand
       if (brands.isNotEmpty) {
+        setState(() {
+          _selectedBrand = brands.first;
+        });
         _onBrandChanged(brands.first);
       }
     } catch (e) {
@@ -189,7 +192,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Select ${_selectedBrand.toUpperCase()} TV'),
+        title: Text('Select ${_selectedBrand?.toUpperCase() ?? 'TV'}'),
         content: SizedBox(
           width: double.maxFinite,
           child: _discoveredTVs.isEmpty
@@ -244,14 +247,14 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
     }
 
     setState(() {
-      _tvName = '${_selectedBrand.toUpperCase()} TV ($ipAddress)';
+      _tvName = '${_selectedBrand?.toUpperCase() ?? 'TV'} ($ipAddress)';
     });
     await _tvService!.connectToTV(ipAddress, _tvName);
 
     // Save successful connection
     if (_tvService!.isConnected) {
       await AppPreferences.saveLastTV(
-        brand: _selectedBrand,
+        brand: _selectedBrand!,
         ipAddress: ipAddress,
         tvName: _tvName,
       );
@@ -386,10 +389,11 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                       const Center(child: CircularProgressIndicator())
                     else
                       DropdownButtonFormField<String>(
-                        value: _selectedBrand,
+                        initialValue: _selectedBrand,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.tv),
+                          hintText: 'Select TV Brand',  // Add hint
                         ),
                         items: _availableBrands.map((brand) {
                           return DropdownMenuItem(
