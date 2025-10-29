@@ -9,6 +9,7 @@ class TVConfig {
   final AuthenticationConfig authentication;
   final ScanConfig scan;
   final Map<String, dynamic> commands;
+  final Map<String, dynamic> payloads;
   final Map<String, dynamic> keys;
   final FeaturesConfig features;
   final Map<String, dynamic>? registration;
@@ -22,6 +23,7 @@ class TVConfig {
     required this.authentication,
     required this.scan,
     required this.commands,
+    required this.payloads,
     required this.keys,
     required this.features,
     this.registration,
@@ -36,7 +38,12 @@ class TVConfig {
       connection: ConnectionConfig.fromYaml(yaml['connection']),
       authentication: AuthenticationConfig.fromYaml(yaml['authentication']),
       scan: ScanConfig.fromYaml(yaml['scan']),
-      commands: Map<String, dynamic>.from(yaml['commands']),
+      commands: yaml['commands'] != null
+          ? Map<String, dynamic>.from(yaml['commands'])
+          : {},
+      payloads: yaml['payloads'] != null
+          ? Map<String, dynamic>.from(yaml['payloads'])
+          : {},
       keys: Map<String, dynamic>.from(yaml['keys']),
       features: FeaturesConfig.fromYaml(yaml['features']),
       registration: yaml['registration'] != null
@@ -47,6 +54,97 @@ class TVConfig {
 
   String? getKeyCode(String key) {
     return keys[key]?.toString();
+  }
+
+  Map<String, dynamic> generatePayloadKey({required Map<String, dynamic> params}) {
+    if (!payloads.containsKey("remote_key")) {
+      throw ArgumentError('Payload template "remote_key" not found in config.');
+    }
+
+    final template = payloads["remote_key"];
+    final templateMap = _yamlToMap(template);
+    final result = _substitute(templateMap, params);
+
+    // Convert the result to Map<String, dynamic>
+    return Map<String, dynamic>.from(result as Map);
+  }
+
+  Map<String, dynamic> generatePayloadText({required Map<String, dynamic> params}) {
+    if (!payloads.containsKey("text_input")) {
+      throw ArgumentError('Payload template "text_input" not found in config.');
+    }
+
+    final template = payloads["text_input"];
+    final templateMap = _yamlToMap(template);
+    final result = _substitute(templateMap, params);
+
+    // Convert the result to Map<String, dynamic>
+    return Map<String, dynamic>.from(result as Map);
+  }
+
+  /// Recursive helper function to traverse the map/list structure and perform substitution.
+  dynamic _substitute(dynamic templateValue, Map<String, dynamic> params) {
+    // 1. Handle Maps (e.g., entry3)
+    if (templateValue is Map) {
+      // Recursively process map entries
+      return templateValue.map((key, value) =>
+          MapEntry(key, _substitute(value, params)));
+    }
+    // 2. Handle Lists (if present)
+    else if (templateValue is List) {
+      // Recursively process list items
+      return templateValue.map((item) => _substitute(item, params)).toList();
+    }
+    // 3. Handle Strings (where substitution occurs)
+    else if (templateValue is String) {
+      // Check if the string is a substitution placeholder, e.g., "{value1}"
+      final regex = RegExp(r'^\{(.+)\}$');
+      final match = regex.firstMatch(templateValue.trim());
+
+      if (match != null) {
+        final placeholderKey = match.group(1)!;
+
+        // --- SPECIAL SUBSTITUTIONS ---
+
+        // a) Base64 Encoding Check (e.g., {value1_base64})
+        if (placeholderKey.endsWith('_base64')) {
+          final originalKey =
+          placeholderKey.substring(0, placeholderKey.length - 7);
+          final value = params[originalKey];
+          if (value is String) {
+            return base64Encode(utf8.encode(value));
+          }
+          // If value is missing or not a string, return the original placeholder
+          return templateValue;
+        }
+
+        // b) Timestamp Check (e.g., {timestamp})
+        if (placeholderKey == 'timestamp') {
+          return DateTime.now().millisecondsSinceEpoch.toString();
+        }
+
+        // --- REGULAR SUBSTITUTION (e.g., {value1}) ---
+        return params[placeholderKey] ?? templateValue;
+      }
+    }
+
+    // 4. Handle other types (int, bool, etc.) - return as is
+    return templateValue;
+  }
+
+  // Helper to convert YamlMap to Map<String, dynamic>
+  dynamic _yamlToMap(dynamic yaml) {
+    if (yaml is Map) {
+      return Map<String, dynamic>.fromEntries(
+        yaml.entries.map((e) => MapEntry(
+          e.key.toString(),
+          _yamlToMap(e.value),
+        )),
+      );
+    } else if (yaml is List) {
+      return yaml.map(_yamlToMap).toList();
+    }
+    return yaml;
   }
 }
 

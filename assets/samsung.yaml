@@ -28,7 +28,7 @@ scan:
   timeout_ms: 500
 
 # Command structure for sending keys
-commands:
+payloads:
   remote_key:
     method: ms.remote.control
     params:

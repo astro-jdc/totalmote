@@ -39,16 +39,16 @@ registration:
       appVersion: 1.0.0
 
 # Command structure
-commands:
-  button:
+payloads:
+  remote_key:
     type: request
     id: "button_{timestamp}"
-    uri: "{uri}"
+    uri: "{key}"
 
   text_input:
     type: request
     id: "text_{timestamp}"
-    uri: ssap://com.webos.service.ime/insertText
+    uri: "ssap://com.webos.service.ime/insertText"
     payload:
       text: "{text}"
       replace: 0

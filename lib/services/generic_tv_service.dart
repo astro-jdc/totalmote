@@ -244,46 +244,23 @@ class GenericTVService {
       return;
     }
 
-    // Get the actual key code from config
     final keyCode = config.getKeyCode(key);
     if (keyCode == null) {
       logger.w('Unknown key: $key for ${config.brand}');
       return;
     }
 
-    // Build command based on brand
-    dynamic payload;
+    final params = {
+      'key': keyCode,
+    };
 
-    if (config.brand == 'Samsung') {
-      final commandTemplate = config.commands['remote_key'];
-      payload = {
-        'method': commandTemplate['method'],
-        'params': {
-          'Cmd': commandTemplate['params']['Cmd'],
-          'DataOfCmd': keyCode,
-          'Option': commandTemplate['params']['Option'],
-          'TypeOfRemote': commandTemplate['params']['TypeOfRemote'],
-        },
-      };
-    } else if (config.brand == 'LG') {
-      payload = {
-        'type': 'request',
-        'id': 'button_${DateTime.now().millisecondsSinceEpoch}',
-        'uri': keyCode,
-      };
+    dynamic payload = config.generatePayloadKey(params: params);
 
-      // Add payload for special commands
-      if (keyCode.contains('setMute')) {
-        payload['payload'] = {'mute': true};
-      } else if (keyCode.contains('launch') && key == 'home') {
-        payload['payload'] = {'id': 'com.webos.app.home'};
-      }
-    }
+    // Debug: Show the generated payload
+    logger.d('Generated payload for key "$key": ${jsonEncode(payload)}');
 
-    if (payload != null) {
-      _channel!.sink.add(jsonEncode(payload));
-      logger.d('Sent command: $key -> $keyCode');
-    }
+    _channel!.sink.add(jsonEncode(payload));
+    logger.d('Sent command: $key -> $keyCode');
   }
 
   void sendText(String text) {
@@ -297,37 +274,18 @@ class GenericTVService {
       throw Exception('Text input not supported');
     }
 
-    dynamic command;
+    final params = {
+      'text': text,
+    };
 
-    if (config.brand == 'Samsung') {
-      final encodedText = base64.encode(utf8.encode(text));
-      final commandTemplate = config.commands['text_input'];
+    dynamic payload = config.generatePayloadText(params: params);
 
-      command = {
-        'method': commandTemplate['method'],
-        'params': {
-          'Cmd': commandTemplate['params']['Cmd'],
-          'DataOfCmd': encodedText,
-          'Option': commandTemplate['params']['Option'],
-          'TypeOfRemote': commandTemplate['params']['TypeOfRemote'],
-        }
-      };
-    } else if (config.brand == 'LG') {
-      command = {
-        'type': 'request',
-        'id': 'text_${DateTime.now().millisecondsSinceEpoch}',
-        'uri': 'ssap://com.webos.service.ime/insertText',
-        'payload': {
-          'text': text,
-          'replace': 0,
-        }
-      };
-    }
+    // Debug: Show the generated payload
+    logger.d('Generated payload for text "$text": ${jsonEncode(text)}');
 
-    if (command != null) {
-      _channel!.sink.add(json.encode(command));
-      logger.d('Sent text: $text');
-    }
+
+    _channel!.sink.add(jsonEncode(payload));
+    logger.d('Sent text: $text');
   }
 
   void dispose() {
