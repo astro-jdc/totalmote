@@ -10,6 +10,8 @@ import '../widgets/media_controls_card.dart';
 import '../widgets/remote_button.dart';
 import '../utils/app_logger.dart';
 import '../utils/app_preferences.dart';
+import 'yaml_viewer_screen.dart';
+
 
 class RemoteControlScreen extends StatefulWidget {
   const RemoteControlScreen({Key? key}) : super(key: key);
@@ -340,11 +342,41 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Show loading screen while brands are loading
+    if (_isLoadingBrands) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 24),
+              Text(
+                'Loading TV Configurations...',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Totalmote - Universal TV Remote'),
         centerTitle: true,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.code),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const YamlViewerScreen(),
+                ),
+              );
+            },
+            tooltip: 'View YAML Config',
+          ),
           if (AppPreferences.hasSavedTV() && !_isConnected)
             IconButton(
               icon: const Icon(Icons.delete_outline),
