@@ -251,10 +251,13 @@ class GenericTVService {
     }
 
     final params = {
-      'key': key,
+      'key': keyCode,
     };
 
     dynamic payload = config.generatePayloadKey(params: params);
+
+    // Debug: Show the generated payload
+    logger.d('Generated payload for key "$key": ${jsonEncode(payload)}');
 
     _channel!.sink.add(jsonEncode(payload));
     logger.d('Sent command: $key -> $keyCode');
@@ -276,6 +279,10 @@ class GenericTVService {
     };
 
     dynamic payload = config.generatePayloadText(params: params);
+
+    // Debug: Show the generated payload
+    logger.d('Generated payload for text "$text": ${jsonEncode(text)}');
+
 
     _channel!.sink.add(jsonEncode(payload));
     logger.d('Sent text: $text');

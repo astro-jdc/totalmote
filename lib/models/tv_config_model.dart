@@ -38,8 +38,12 @@ class TVConfig {
       connection: ConnectionConfig.fromYaml(yaml['connection']),
       authentication: AuthenticationConfig.fromYaml(yaml['authentication']),
       scan: ScanConfig.fromYaml(yaml['scan']),
-      commands: Map<String, dynamic>.from(yaml['commands']),
-      payloads: Map<String, dynamic>.from(yaml['payloads']),
+      commands: yaml['commands'] != null
+          ? Map<String, dynamic>.from(yaml['commands'])
+          : {},
+      payloads: yaml['payloads'] != null
+          ? Map<String, dynamic>.from(yaml['payloads'])
+          : {},
       keys: Map<String, dynamic>.from(yaml['keys']),
       features: FeaturesConfig.fromYaml(yaml['features']),
       registration: yaml['registration'] != null
@@ -53,26 +57,29 @@ class TVConfig {
   }
 
   Map<String, dynamic> generatePayloadKey({required Map<String, dynamic> params}) {
-
     if (!payloads.containsKey("remote_key")) {
       throw ArgumentError('Payload template "remote_key" not found in config.');
     }
 
-    final template = payloads["remote_key"] as Map<String, dynamic>;
+    final template = payloads["remote_key"];
+    final templateMap = _yamlToMap(template);
+    final result = _substitute(templateMap, params);
 
-    // Start the recursive substitution process
-    return _substitute(template, params) as Map<String, dynamic>;
+    // Convert the result to Map<String, dynamic>
+    return Map<String, dynamic>.from(result as Map);
   }
 
   Map<String, dynamic> generatePayloadText({required Map<String, dynamic> params}) {
-    if (!payloads.containsKey("remote_text")) {
-      throw ArgumentError('Payload template "remote_text" not found in config.');
+    if (!payloads.containsKey("text_input")) {
+      throw ArgumentError('Payload template "text_input" not found in config.');
     }
 
-    final template = payloads["remote_text"] as Map<String, dynamic>;
+    final template = payloads["text_input"];
+    final templateMap = _yamlToMap(template);
+    final result = _substitute(templateMap, params);
 
-    // Start the recursive substitution process
-    return _substitute(template, params) as Map<String, dynamic>;
+    // Convert the result to Map<String, dynamic>
+    return Map<String, dynamic>.from(result as Map);
   }
 
   /// Recursive helper function to traverse the map/list structure and perform substitution.
@@ -123,6 +130,21 @@ class TVConfig {
 
     // 4. Handle other types (int, bool, etc.) - return as is
     return templateValue;
+  }
+
+  // Helper to convert YamlMap to Map<String, dynamic>
+  dynamic _yamlToMap(dynamic yaml) {
+    if (yaml is Map) {
+      return Map<String, dynamic>.fromEntries(
+        yaml.entries.map((e) => MapEntry(
+          e.key.toString(),
+          _yamlToMap(e.value),
+        )),
+      );
+    } else if (yaml is List) {
+      return yaml.map(_yamlToMap).toList();
+    }
+    return yaml;
   }
 }
 
