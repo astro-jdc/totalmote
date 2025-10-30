@@ -39,17 +39,21 @@ class GenericTVService {
       final interfaces = await NetworkInterface.list();
       String? localIP;
 
-      for (var interface in interfaces) {
+      // Sort interfaces to prioritize wlan and en
+      final sortedInterfaces = _sortInterfacesByPriority(interfaces);
+
+      for (var interface in sortedInterfaces) {
         logger.i('Interface: ${interface.name}');
-        if (interface.name.contains('wlan') || interface.name.contains('en')) {
-          for (var addr in interface.addresses) {
-            if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
-              if (addr.address.startsWith('192.168.') ||
-                  addr.address.startsWith('10.') ||
-                  addr.address.startsWith('172.')) {
-                localIP = addr.address;
-                break;
-              }
+
+        if (interface.name.toLowerCase().contains('lo')) continue;
+
+        for (var addr in interface.addresses) {
+          if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
+            if (addr.address.startsWith('192.168.') ||
+                addr.address.startsWith('10.') ||
+                addr.address.startsWith('172.')) {
+              localIP = addr.address;
+              break;
             }
           }
         }
@@ -82,6 +86,24 @@ class GenericTVService {
     }
 
     return discoveredTVs;
+  }
+
+  // Sort interfaces to prioritize wlan and en (WiFi and Ethernet)
+  List<NetworkInterface> _sortInterfacesByPriority(List<NetworkInterface> interfaces) {
+    final priorityInterfaces = <NetworkInterface>[];
+    final otherInterfaces = <NetworkInterface>[];
+
+    for (var interface in interfaces) {
+      final name = interface.name.toLowerCase();
+      if (name.startsWith('wlan') || name.startsWith('en')) {
+        priorityInterfaces.add(interface);
+      } else {
+        otherInterfaces.add(interface);
+      }
+    }
+
+    // Return priority interfaces first, then others
+    return [...priorityInterfaces, ...otherInterfaces];
   }
 
   Future<void> _checkTVAtIP(String ip, List<TVDevice> discoveredTVs) async {
