@@ -11,6 +11,7 @@ import '../widgets/remote_button.dart';
 import '../utils/app_logger.dart';
 import '../utils/app_preferences.dart';
 import 'yaml_viewer_screen.dart';
+import 'keyboard_screen.dart';
 
 
 class RemoteControlScreen extends StatefulWidget {
@@ -462,6 +463,32 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
 
             // Text Input
             TextInputCard(onShowDialog: _showTextInputDialog),
+            const SizedBox(height: 16),
+
+            // Keyboard Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _isConnected
+                    ? () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => KeyboardScreen(
+                        onSendKey: _sendKey,
+                      ),
+                    ),
+                  );
+                }
+                    : null,
+                icon: const Icon(Icons.keyboard),
+                label: const Text('Open Keyboard'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(0, 56),
+                  backgroundColor: Colors.purple[700],
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
 
             // Power Button
