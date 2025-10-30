@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ConnectionCard extends StatelessWidget {
   final TextEditingController ipController;
@@ -10,7 +11,7 @@ class ConnectionCard extends StatelessWidget {
   final VoidCallback onConnect;
 
   const ConnectionCard({
-    Key? key,
+    super.key,
     required this.ipController,
     required this.isConnected,
     required this.isScanning,
@@ -18,7 +19,7 @@ class ConnectionCard extends StatelessWidget {
     required this.tvName,
     required this.onScan,
     required this.onConnect,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +40,10 @@ class ConnectionCard extends StatelessWidget {
                 prefixIcon: Icon(Icons.tv),
                 helperText: 'Find IP in TV Settings → Network',
               ),
-              keyboardType:
-              const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:  TextInputType.text,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')), // Allow only numbers and dots
+              ],
             ),
             const SizedBox(height: 12),
             Row(

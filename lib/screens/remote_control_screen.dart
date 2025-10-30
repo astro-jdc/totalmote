@@ -14,7 +14,7 @@ import 'yaml_viewer_screen.dart';
 
 
 class RemoteControlScreen extends StatefulWidget {
-  const RemoteControlScreen({Key? key}) : super(key: key);
+  const RemoteControlScreen({super.key});
 
   @override
   State<RemoteControlScreen> createState() => _RemoteControlScreenState();

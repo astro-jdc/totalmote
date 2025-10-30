@@ -40,13 +40,16 @@ class GenericTVService {
       String? localIP;
 
       for (var interface in interfaces) {
-        for (var addr in interface.addresses) {
-          if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
-            if (addr.address.startsWith('192.168.') ||
-                addr.address.startsWith('10.') ||
-                addr.address.startsWith('172.')) {
-              localIP = addr.address;
-              break;
+        logger.i('Interface: ${interface.name}');
+        if (interface.name.contains('wlan') || interface.name.contains('en')) {
+          for (var addr in interface.addresses) {
+            if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
+              if (addr.address.startsWith('192.168.') ||
+                  addr.address.startsWith('10.') ||
+                  addr.address.startsWith('172.')) {
+                localIP = addr.address;
+                break;
+              }
             }
           }
         }

@@ -4,7 +4,7 @@ import '../services/tv_service_factory.dart';
 import '../utils/app_logger.dart';
 
 class YamlViewerScreen extends StatefulWidget {
-  const YamlViewerScreen({Key? key}) : super(key: key);
+  const YamlViewerScreen({super.key});
 
   @override
   State<YamlViewerScreen> createState() => _YamlViewerScreenState();

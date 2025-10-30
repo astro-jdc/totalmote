@@ -8,13 +8,13 @@ class RemoteButton extends StatelessWidget {
   final Color? color;
 
   const RemoteButton({
-    Key? key,
+    super.key,
     required this.icon,
     this.label,
     required this.onPressed,
     this.size = 60,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

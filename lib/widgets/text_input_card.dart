@@ -4,9 +4,9 @@ class TextInputCard extends StatelessWidget {
   final VoidCallback onShowDialog;
 
   const TextInputCard({
-    Key? key,
+    super.key,
     required this.onShowDialog,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

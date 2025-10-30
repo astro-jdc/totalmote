@@ -5,9 +5,9 @@ class ControlButtonsCard extends StatelessWidget {
   final Function(String) onSendKey;
 
   const ControlButtonsCard({
-    Key? key,
+    super.key,
     required this.onSendKey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

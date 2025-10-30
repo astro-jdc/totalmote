@@ -5,9 +5,9 @@ class DPadCard extends StatelessWidget {
   final Function(String) onSendKey;
 
   const DPadCard({
-    Key? key,
+    super.key,
     required this.onSendKey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -12,7 +12,7 @@ void main() async {
 }
 
 class TotalMoteApp extends StatelessWidget {
-  const TotalMoteApp({Key? key}) : super(key: key);
+  const TotalMoteApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -5,9 +5,9 @@ class MediaControlsCard extends StatelessWidget {
   final Function(String) onSendKey;
 
   const MediaControlsCard({
-    Key? key,
+    super.key,
     required this.onSendKey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,22 +29,22 @@ class MediaControlsCard extends StatelessWidget {
                 RemoteButton(
                   icon: Icons.fast_rewind,
                   label: 'Rewind',
-                  onPressed: () => onSendKey('KEY_REWIND'),
+                  onPressed: () => onSendKey('rewind'),
                 ),
                 RemoteButton(
                   icon: Icons.play_arrow,
                   label: 'Play',
-                  onPressed: () => onSendKey('KEY_PLAY'),
+                  onPressed: () => onSendKey('play'),
                 ),
                 RemoteButton(
                   icon: Icons.pause,
                   label: 'Pause',
-                  onPressed: () => onSendKey('KEY_PAUSE'),
+                  onPressed: () => onSendKey('pause'),
                 ),
                 RemoteButton(
                   icon: Icons.fast_forward,
                   label: 'Forward',
-                  onPressed: () => onSendKey('KEY_FF'),
+                  onPressed: () => onSendKey('fast_forward'),
                 ),
               ],
             ),
@@ -52,7 +52,7 @@ class MediaControlsCard extends StatelessWidget {
             RemoteButton(
               icon: Icons.stop,
               label: 'Stop',
-              onPressed: () => onSendKey('KEY_STOP'),
+              onPressed: () => onSendKey('stop'),
             ),
           ],
         ),
