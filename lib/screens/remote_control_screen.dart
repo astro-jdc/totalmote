@@ -456,6 +456,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
               tvName: _tvName,
               onScan: scanForTVs,
               onConnect: () => _connectToTV(_ipController.text),
+              onDisconnect: _disconnectFromTV,
             ),
             const SizedBox(height: 16),
 
