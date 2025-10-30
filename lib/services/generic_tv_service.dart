@@ -306,7 +306,7 @@ class GenericTVService {
     dynamic payload = config.generatePayloadText(params: params);
 
     // Debug: Show the generated payload
-    logger.d('Generated payload for text "$text": ${jsonEncode(text)}');
+    logger.d('Generated payload for text "$text": ${jsonEncode(payload)}');
 
 
     _channel!.sink.add(jsonEncode(payload));
