@@ -40,7 +40,7 @@ payloads:
   text_input:
     method: ms.remote.control
     params:
-      Cmd: Click
+      Cmd: "{text}"
       DataOfCmd: "{text_base64}"
       Option: "false"
       TypeOfRemote: SendInputString
