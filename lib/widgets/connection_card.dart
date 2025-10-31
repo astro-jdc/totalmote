@@ -60,9 +60,7 @@ class ConnectionCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: isConnected
-                        ? onDisconnect
-                        : onConnect,
+                    onPressed: isConnected ? onDisconnect : onConnect,
                     icon: Icon(isConnected ? Icons.link_off : Icons.link),
                     label: Text(isConnected ? 'Disconnect' : 'Connect'),
                     style: ElevatedButton.styleFrom(
@@ -84,7 +82,9 @@ class ConnectionCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    tvName.isNotEmpty ? '$tvName - $statusMessage' : statusMessage,
+                    tvName.isNotEmpty
+                        ? '$tvName - $statusMessage'
+                        : statusMessage,
                     style: TextStyle(
                       color: isConnected ? Colors.green : Colors.orange,
                     ),
