@@ -42,6 +42,11 @@ class GoogleTVService extends GenericTVService {
   }
 
   @override
+  void openApp(String appId) {
+    // Open app via Google TV protocol
+  }
+
+  @override
   void dispose() {
     // Cleanup
   }

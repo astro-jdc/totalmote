@@ -45,6 +45,24 @@ payloads:
       Option: "false"
       TypeOfRemote: SendInputString
 
+  launch_app:
+    method: ms.channel.emit
+    params:
+      event: ed.apps.launch
+      to: host
+      data:
+        appId: "{app_id}"
+        action_type: "{action_type}"
+
+  get_app_info:
+    method: ms.channel.emit
+    params:
+      event: ed.installedApp.get
+      to: host
+      data:
+        appId: "{app_id}"
+        action_type: "{action_type}"
+
 # Key mappings
 keys:
   # Power
@@ -157,6 +175,15 @@ keys:
   hdmi2: KEY_HDMI2
   hdmi3: KEY_HDMI3
   hdmi4: KEY_HDMI4
+
+
+  # Apps and Multimedia
+  netflix: "org.tizen.netflix-app"
+  youtube: "111299001912"
+  amazon_prime: "3201910019365"
+  disney_plus: "3201901017640"
+  spotify: "3201606009684"
+  hulu: "3201601007625"
 
 features:
   supports_text_input: true

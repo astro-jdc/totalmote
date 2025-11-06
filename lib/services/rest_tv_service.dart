@@ -42,6 +42,11 @@ class RestTVService extends GenericTVService {
   }
 
   @override
+  void openApp(String appId) {
+    // Open app via REST
+  }
+
+  @override
   void dispose() {
     // Cleanup
   }

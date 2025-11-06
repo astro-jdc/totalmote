@@ -15,5 +15,6 @@ abstract class GenericTVService {
   void disconnect([String? message]);
   void sendKey(String key);
   void sendText(String text);
+  void openApp(String appId);
   void dispose();
 }

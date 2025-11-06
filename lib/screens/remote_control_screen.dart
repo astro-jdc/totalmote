@@ -8,6 +8,7 @@ import '../widgets/dpad_card.dart';
 import '../widgets/control_buttons_card.dart';
 import '../widgets/media_controls_card.dart';
 import '../widgets/remote_button.dart';
+import '../widgets/apps_card.dart';
 import '../utils/app_logger.dart';
 import '../utils/app_preferences.dart';
 import 'yaml_viewer_screen.dart';
@@ -294,6 +295,10 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
     }
   }
 
+  void _openApp(String tvAppName) {
+    _tvService?.openApp(tvAppName);
+  }
+
   void _showTextInputDialog() {
     final textController = TextEditingController();
 
@@ -511,6 +516,10 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
 
             // Media Controls
             MediaControlsCard(onSendKey: _sendKey),
+            const SizedBox(height: 24),
+
+            // Streaming Apps
+            AppsCard(onOpenApp: _openApp),
             const SizedBox(height: 24),
           ],
         ),

@@ -82,6 +82,17 @@ class TVConfig {
     return Map<String, dynamic>.from(result as Map);
   }
 
+  Map<String, dynamic> generatePayloadApp({required Map<String, dynamic> params}) {
+    if (!payloads.containsKey("launch_app")) {
+      throw ArgumentError('Payload template "launch_app" not found in config.');
+    }
+
+    final template = payloads["launch_app"];
+    final templateMap = _yamlToMap(template);
+    final result = _substitute(templateMap, params);
+    return Map<String, dynamic>.from(result as Map);
+  }
+
   /// Recursive helper function to traverse the map/list structure and perform substitution.
   dynamic _substitute(dynamic templateValue, Map<String, dynamic> params) {
     // 1. Handle Maps (e.g., entry3)

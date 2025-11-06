@@ -319,6 +319,31 @@ class WSTVService extends GenericTVService {
   }
 
   @override
+  void openApp(String tvAppName) {
+    if (_channel == null || !_isConnected) {
+      logger.w('Cannot launch app - not connected to TV');
+      onStatusChanged?.call('Cannot launch app: Not connected.');
+      return;
+    }
+
+    final appId = config.getKeyCode(tvAppName);
+    if (appId == null) {
+      logger.w('Unknown app: $tvAppName for ${config.brand}');
+      return;
+    }
+
+    final params = {
+      'app_id': appId,
+      'action_type': "DEEP_LINK"
+    };
+    dynamic payload = config.generatePayloadApp(params: params);
+
+    logger.d('Generated app launch payload: ${jsonEncode(payload)}');
+    _channel!.sink.add(jsonEncode(payload));
+    logger.d('Sent app launch: $appName -> $appId');
+  }
+
+  @override
   void dispose() {
     _channel?.sink.close();
     logger.i('${config.brand} TVService disposed');
