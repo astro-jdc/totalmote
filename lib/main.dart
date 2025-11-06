@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'screens/remote_control_screen.dart';
 import 'utils/app_preferences.dart';
+import 'config/app_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +25,7 @@ class TotalMoteApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Totalmote',
+      title: AppConfig.appName,
       theme: ThemeData.dark(),
       home: const RemoteControlScreen(),
     );

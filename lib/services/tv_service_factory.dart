@@ -1,6 +1,10 @@
 import '../config/tv_config_loader.dart';
 import 'generic_tv_service.dart';
+import 'ws_tv_service.dart';
+import 'rest_tv_service.dart';
+import 'google_tv_service.dart';
 import '../utils/app_logger.dart';
+import '../config/app_config.dart';
 
 /// Factory class to create TV services based on brand
 class TVServiceFactory {
@@ -19,13 +23,26 @@ class TVServiceFactory {
       logger.i('Creating new TV service for $brand');
       final config = await TVConfigLoader.loadConfig(brand);
 
-      // Create service with the config
-      final service = GenericTVService(config);
+      // Create service based on protocol
+      GenericTVService service;
+      switch (config.protocol.toLowerCase()) {
+        case 'websocket':
+          service = WSTVService(config, appName: AppConfig.appName);
+          break;
+        case 'rest':
+          service = RestTVService(config, appName: AppConfig.appName);
+          break;
+        case 'googletv':
+          service = GoogleTVService(config, appName: AppConfig.appName);
+          break;
+        default:
+          throw UnsupportedError('Protocol ${config.protocol} not supported');
+      }
 
       // Cache it
       _serviceCache[brand] = service;
 
-      logger.i('Successfully created ${config.brand} TV service');
+      logger.i('Successfully created ${config.brand} TV service using ${config.protocol} protocol');
       return service;
     } catch (e) {
       logger.e('Failed to create TV service for $brand', error: e);
