@@ -4,9 +4,9 @@ class KeyboardWidget extends StatelessWidget {
   final Function(String) onKeyPress;
 
   const KeyboardWidget({
-    Key? key,
+    super.key,
     required this.onKeyPress,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

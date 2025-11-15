@@ -1,13 +1,10 @@
 import 'generic_tv_service.dart';
 import '../models/tv_device.dart';
-import '../models/tv_config_model.dart';
-import '../utils/app_logger.dart';
 
 class RestTVService extends GenericTVService {
   bool _connected = false;
 
-  RestTVService(TVConfig config, {required String appName})
-      : super(config, appName: appName);
+  RestTVService(super.config, {required super.appName});
 
   @override
   bool get isConnected => _connected;

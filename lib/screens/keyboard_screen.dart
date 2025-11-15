@@ -5,9 +5,9 @@ class KeyboardScreen extends StatelessWidget {
   final Function(String) onSendKey;
 
   const KeyboardScreen({
-    Key? key,
+    super.key,
     required this.onSendKey,
-  }) : super(key: key);
+  });
 
   void _handleKeyPress(String key) {
     onSendKey(key);

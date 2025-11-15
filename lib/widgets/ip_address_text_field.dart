@@ -7,11 +7,11 @@ class IPAddressTextField extends StatelessWidget {
   final String? errorText;
 
   const IPAddressTextField({
-    Key? key,
+    super.key,
     required this.controller,
     this.enabled = true,
     this.errorText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

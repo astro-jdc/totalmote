@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../models/tv_device.dart';
-import '../models/tv_config_model.dart';
 import '../utils/app_logger.dart';
 
 class WSTVService extends GenericTVService {
@@ -13,11 +12,13 @@ class WSTVService extends GenericTVService {
   bool _isConnected = false;
   String _clientKey = ''; // For LG TVs
 
+  @override
   Function(String)? onStatusChanged;
+  @override
   Function(bool)? onConnectionChanged;
 
   // WSTVService(this.config);
-  WSTVService(TVConfig config, {required String appName}) : super(config, appName: appName);
+  WSTVService(super.config, {required super.appName});
 
   @override
   bool get isConnected => _isConnected;
