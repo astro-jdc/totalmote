@@ -53,6 +53,7 @@ payloads:
       data:
         appId: "{app_id}"
         action_type: "{action_type}"
+        metaTag: "{meta_tag}"
 
   get_app_info:
     method: ms.channel.emit
@@ -178,6 +179,7 @@ keys:
 
 
   # Apps and Multimedia
+  browser: "org.tizen.browser"
   netflix: "org.tizen.netflix-app"
   youtube: "111299001912"
   amazon_prime: "3201910019365"

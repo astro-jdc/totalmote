@@ -44,6 +44,11 @@ class RestTVService extends GenericTVService {
   }
 
   @override
+  void openBrowser({String? url}) {
+
+  }
+
+  @override
   void dispose() {
     // Cleanup
   }

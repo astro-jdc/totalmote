@@ -345,6 +345,28 @@ class WSTVService extends GenericTVService {
   }
 
   @override
+  void openBrowser({String? url}) {
+    if (_channel == null || !_isConnected) {
+      logger.w('Cannot launch browser - not connected to TV');
+      onStatusChanged?.call('Cannot launch browser: Not connected.');
+      return;
+    }
+
+    final appId = 'org.tizen.browser';
+
+    final params = {
+      'app_id': appId,
+      'action_type': "NATIVE_LAUNCH",
+      'meta_tag': url != null ? {'url': url} : null,
+    };
+    dynamic payload = config.generatePayloadApp(params: params);
+
+    logger.d('Browser launch payload: ${jsonEncode(payload)}');
+    _channel!.sink.add(jsonEncode(payload));
+    logger.d('Opening URL: $url');
+  }
+
+  @override
   void dispose() {
     _channel?.sink.close();
     logger.i('${config.brand} TVService disposed');

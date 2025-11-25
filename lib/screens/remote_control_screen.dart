@@ -339,6 +339,50 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
     );
   }
 
+  void _openBrowser({String? url}) {
+    _tvService?.openBrowser(url: url);
+  }
+
+  void _showBrowserDialog() {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Open Browser'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Enter URL (optional)',
+            border: OutlineInputBorder(),
+          ),
+          onSubmitted: (_) {
+            final value = controller.text.trim();
+            _openBrowser(url: value.isEmpty ? null : value);
+            Navigator.pop(ctx);
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _openBrowser(); // No URL -> just launch
+              Navigator.pop(ctx);
+            },
+            child: const Text('Just Open'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final value = controller.text.trim();
+              _openBrowser(url: value.isEmpty ? null : value);
+              Navigator.pop(ctx);
+            },
+            child: const Text('Launch'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _tvService?.dispose();
@@ -494,6 +538,19 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                 ),
               ),
             ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _isConnected ? _showBrowserDialog : null,
+                icon: const Icon(Icons.public),
+                label: const Text('Open Browser'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(0, 56),
+                  backgroundColor: Colors.blue[700],
+                ),
+              ),
+            ),
+
             const SizedBox(height: 16),
 
             // Power Button

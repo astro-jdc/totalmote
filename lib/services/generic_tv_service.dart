@@ -16,5 +16,6 @@ abstract class GenericTVService {
   void sendKey(String key);
   void sendText(String text);
   void openApp(String appId);
+  void openBrowser({String? url});
   void dispose();
 }
