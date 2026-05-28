@@ -53,10 +53,8 @@ void main() {
       expect(config.getKeyCode('unknown_pattern:x'), isNull);
     });
 
-    test('key_code with empty arg returns KEY_ (graceful, not crash)', () {
-      final result = config.getKeyCode('key_code:');
-      // Empty arg → toUpperCase() is still '' → 'KEY_'
-      // We just verify it doesn't throw
+    test('key_code with empty arg does not throw', () {
+      // Empty arg → toUpperCase() is still '' → template resolves to 'KEY_'
       expect(() => config.getKeyCode('key_code:'), returnsNormally);
     });
   });

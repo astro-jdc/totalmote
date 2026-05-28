@@ -1,4 +1,3 @@
-import 'package:totalmote/models/tv_config_model.dart';
 import 'package:totalmote/models/tv_device.dart';
 import 'package:totalmote/services/generic_tv_service.dart';
 

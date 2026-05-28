@@ -87,12 +87,12 @@ void main() {
     test('key_code:a from keyboard resolves to KEY_A in TVConfig', () {
       // This is a pure unit test — no widget pump needed.
       // Verifies the full pipeline: widget emits → TVConfig resolves.
-      from_keyboard_to_keycode();
+      fromKeyboardToKeycode();
     });
   });
 }
 
-void from_keyboard_to_keycode() {
+void fromKeyboardToKeycode() {
   // Simulate what KeyboardWidget emits for 'A'
   const displayKey = 'A';
   final emitted = RegExp(r'^[A-Z]$').hasMatch(displayKey)
