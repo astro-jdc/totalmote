@@ -1,0 +1,116 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "Platform to build"
+        required: true
+        default: "both"
+        type: choice
+        options: [both, android, ios]
+
+jobs:
+  # ─────────────────────────────────────────────
+  # Android — signed AAB for Google Play
+  # ─────────────────────────────────────────────
+  build-android:
+    name: Build Android AAB
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.platform == 'both' ||
+      github.event.inputs.platform == 'android'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Decode the base64 keystore stored as a GitHub Secret
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/totalmote-release.jks
+
+      # Write key.properties so build.gradle.kts can read it
+      - name: Write key.properties
+        run: |
+          cat <<EOF > android/key.properties
+          storeFile=totalmote-release.jks
+          storePassword=${{ secrets.STORE_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          EOF
+
+      - name: Build release AAB
+        run: flutter build appbundle --release
+
+      # Clean up signing artifacts immediately after build
+      - name: Remove signing files
+        if: always()
+        run: |
+          rm -f android/app/totalmote-release.jks
+          rm -f android/key.properties
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+  # ─────────────────────────────────────────────
+  # iOS — unsigned build (signing TBD)
+  # App Store deployment will be added once
+  # App Store Connect is configured.
+  # ─────────────────────────────────────────────
+  build-ios:
+    name: Build iOS (unsigned)
+    runs-on: macos-latest
+    if: >
+      github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.platform == 'both' ||
+      github.event.inputs.platform == 'ios'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install --repo-update
+
+      # Builds the iOS app without code signing to verify it compiles.
+      # Replace with 'flutter build ipa' + Fastlane match once
+      # App Store Connect certificates are set up.
+      - name: Build iOS (no-codesign)
+        run: flutter build ios --release --no-codesign
+
+      - name: Upload iOS build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release-app
+          path: build/ios/iphoneos/Runner.app
+          retention-days: 30

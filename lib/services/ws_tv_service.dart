@@ -7,7 +7,6 @@ import '../models/tv_device.dart';
 import '../utils/app_logger.dart';
 
 class WSTVService extends GenericTVService {
-
   WebSocketChannel? _channel;
   bool _isConnected = false;
   String _clientKey = ''; // For LG TVs
@@ -91,7 +90,9 @@ class WSTVService extends GenericTVService {
   }
 
   // Sort interfaces to prioritize wlan and en (WiFi and Ethernet)
-  List<NetworkInterface> _sortInterfacesByPriority(List<NetworkInterface> interfaces) {
+  List<NetworkInterface> _sortInterfacesByPriority(
+    List<NetworkInterface> interfaces,
+  ) {
     final priorityInterfaces = <NetworkInterface>[];
     final otherInterfaces = <NetworkInterface>[];
 
@@ -118,11 +119,9 @@ class WSTVService extends GenericTVService {
         );
 
         socket.destroy();
-        discoveredTVs.add(TVDevice(
-          name: config.modelName,
-          ipAddress: ip,
-          port: port,
-        ));
+        discoveredTVs.add(
+          TVDevice(name: config.modelName, ipAddress: ip, port: port),
+        );
         logger.d('Found ${config.brand} TV at: $ip:$port');
         break; // Found one, no need to check other ports
       } catch (e) {
@@ -150,11 +149,6 @@ class WSTVService extends GenericTVService {
       onStatusChanged?.call('Demo Mode - No real TV connection');
       return;
     }
-
-    // Build connection URI based on config
-    final protocol = config.connection.protocol;
-    final port = config.connection.port;
-    final path = config.connection.path ?? '';
 
     // Build URI using template from config
     final uriString = config.connection.buildUri(
@@ -194,7 +188,7 @@ class WSTVService extends GenericTVService {
       logger.i('✓ WebSocket connection established');
 
       // Handle LG registration if needed
-      if (config.brand == 'LG' && config.registration != null) {
+      if (config.registration != null) {
         _sendLGRegistration();
       } else {
         _isConnected = true;
@@ -203,7 +197,7 @@ class WSTVService extends GenericTVService {
       }
 
       _channel!.stream.listen(
-            (data) {
+        (data) {
           logger.d('TV Message: $data');
           _handleTVMessage(data);
         },
@@ -277,14 +271,15 @@ class WSTVService extends GenericTVService {
     final keyCode = config.getKeyCode(key);
     if (keyCode == null) {
       logger.w('Unknown key: $key for ${config.brand}');
+      onStatusChanged?.call('Key "$key" not supported by ${config.brand}');
       return;
     }
 
-    final params = {
-      'key': keyCode,
-    };
+    final params = {'key': keyCode};
 
-    dynamic payload = config.generatePayloadKey(params: params);
+    final Map<String, dynamic> payload = config.generatePayloadKey(
+      params: params,
+    );
 
     // Debug: Show the generated payload
     logger.d('Generated payload for key "$key": ${jsonEncode(payload)}');
@@ -305,15 +300,14 @@ class WSTVService extends GenericTVService {
       throw Exception('Text input not supported');
     }
 
-    final params = {
-      'text': text,
-    };
+    final params = {'text': text};
 
-    dynamic payload = config.generatePayloadText(params: params);
+    final Map<String, dynamic> payload = config.generatePayloadText(
+      params: params,
+    );
 
     // Debug: Show the generated payload
     logger.d('Generated payload for text "$text": ${jsonEncode(payload)}');
-
 
     _channel!.sink.add(jsonEncode(payload));
     logger.d('Sent text: $text');
@@ -333,11 +327,10 @@ class WSTVService extends GenericTVService {
       return;
     }
 
-    final params = {
-      'app_id': appId,
-      'action_type': "DEEP_LINK"
-    };
-    dynamic payload = config.generatePayloadApp(params: params);
+    final params = {'app_id': appId, 'action_type': "DEEP_LINK"};
+    final Map<String, dynamic> payload = config.generatePayloadApp(
+      params: params,
+    );
 
     logger.d('Generated app launch payload: ${jsonEncode(payload)}');
     _channel!.sink.add(jsonEncode(payload));
@@ -352,14 +345,16 @@ class WSTVService extends GenericTVService {
       return;
     }
 
-    final appId = 'org.tizen.browser';
+    final appId = config.getKeyCode('browser') ?? 'org.tizen.browser';
 
     final params = {
       'app_id': appId,
       'action_type': "NATIVE_LAUNCH",
       'meta_tag': url != null ? {'url': url} : null,
     };
-    dynamic payload = config.generatePayloadApp(params: params);
+    final Map<String, dynamic> payload = config.generatePayloadApp(
+      params: params,
+    );
 
     logger.d('Browser launch payload: ${jsonEncode(payload)}');
     _channel!.sink.add(jsonEncode(payload));

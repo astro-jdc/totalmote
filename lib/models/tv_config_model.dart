@@ -53,10 +53,20 @@ class TVConfig {
   }
 
   String? getKeyCode(String key) {
+    if (key.contains(':')) {
+      final idx = key.indexOf(':');
+      final pattern = key.substring(0, idx);
+      final arg = key.substring(idx + 1);
+      final template = keys[pattern]?.toString();
+      if (template == null) return null;
+      return template.replaceAll('{arg}', arg.toUpperCase());
+    }
     return keys[key]?.toString();
   }
 
-  Map<String, dynamic> generatePayloadKey({required Map<String, dynamic> params}) {
+  Map<String, dynamic> generatePayloadKey({
+    required Map<String, dynamic> params,
+  }) {
     if (!payloads.containsKey("remote_key")) {
       throw ArgumentError('Payload template "remote_key" not found in config.');
     }
@@ -69,7 +79,9 @@ class TVConfig {
     return Map<String, dynamic>.from(result as Map);
   }
 
-  Map<String, dynamic> generatePayloadText({required Map<String, dynamic> params}) {
+  Map<String, dynamic> generatePayloadText({
+    required Map<String, dynamic> params,
+  }) {
     if (!payloads.containsKey("text_input")) {
       throw ArgumentError('Payload template "text_input" not found in config.');
     }
@@ -82,7 +94,9 @@ class TVConfig {
     return Map<String, dynamic>.from(result as Map);
   }
 
-  Map<String, dynamic> generatePayloadApp({required Map<String, dynamic> params}) {
+  Map<String, dynamic> generatePayloadApp({
+    required Map<String, dynamic> params,
+  }) {
     if (!payloads.containsKey("launch_app")) {
       throw ArgumentError('Payload template "launch_app" not found in config.');
     }
@@ -98,8 +112,9 @@ class TVConfig {
     // 1. Handle Maps (e.g., entry3)
     if (templateValue is Map) {
       // Recursively process map entries
-      return templateValue.map((key, value) =>
-          MapEntry(key, _substitute(value, params)));
+      return templateValue.map(
+        (key, value) => MapEntry(key, _substitute(value, params)),
+      );
     }
     // 2. Handle Lists (if present)
     else if (templateValue is List) {
@@ -119,8 +134,10 @@ class TVConfig {
 
         // a) Base64 Encoding Check (e.g., {value1_base64})
         if (placeholderKey.endsWith('_base64')) {
-          final originalKey =
-          placeholderKey.substring(0, placeholderKey.length - 7);
+          final originalKey = placeholderKey.substring(
+            0,
+            placeholderKey.length - 7,
+          );
           final value = params[originalKey];
           if (value is String) {
             return base64Encode(utf8.encode(value));
@@ -147,10 +164,9 @@ class TVConfig {
   dynamic _yamlToMap(dynamic yaml) {
     if (yaml is Map) {
       return Map<String, dynamic>.fromEntries(
-        yaml.entries.map((e) => MapEntry(
-          e.key.toString(),
-          _yamlToMap(e.value),
-        )),
+        yaml.entries.map(
+          (e) => MapEntry(e.key.toString(), _yamlToMap(e.value)),
+        ),
       );
     } else if (yaml is List) {
       return yaml.map(_yamlToMap).toList();
@@ -196,7 +212,7 @@ class ConnectionConfig {
     );
   }
 
-  String buildUri({ required String ipAddress, String? appName,}) {
+  String buildUri({required String ipAddress, String? appName}) {
     if (uriTemplate != null && uriTemplate!.isNotEmpty) {
       // Use template
       String uri = uriTemplate!
@@ -252,10 +268,7 @@ class ScanConfig {
   final List<int> ports;
   final int timeoutMs;
 
-  ScanConfig({
-    required this.ports,
-    required this.timeoutMs,
-  });
+  ScanConfig({required this.ports, required this.timeoutMs});
 
   factory ScanConfig.fromYaml(Map<dynamic, dynamic> yaml) {
     return ScanConfig(

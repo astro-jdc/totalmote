@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class KeyboardWidget extends StatelessWidget {
   final Function(String) onKeyPress;
 
-  const KeyboardWidget({
-    super.key,
-    required this.onKeyPress,
-  });
+  const KeyboardWidget({super.key, required this.onKeyPress});
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +58,7 @@ class KeyboardWidget extends StatelessWidget {
           ),
           child: Text(
             key,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -74,12 +68,12 @@ class KeyboardWidget extends StatelessWidget {
   String _getKeyCommand(String displayKey) {
     // Numbers
     if (RegExp(r'^\d$').hasMatch(displayKey)) {
-      return 'key_$displayKey';
+      return 'key_code:$displayKey';
     }
 
-    // Letters - convert to lowercase with key_ prefix
+    // Letters - convert to lowercase with key_code: prefix
     if (RegExp(r'^[A-Z]$').hasMatch(displayKey)) {
-      return 'key_${displayKey.toLowerCase()}';
+      return 'key_code:${displayKey.toLowerCase()}';
     }
 
     // Return as-is for other characters

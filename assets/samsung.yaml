@@ -101,47 +101,8 @@ keys:
   previous_channel: KEY_PRECH
   channel_list: KEY_CH_LIST
   
-  # Numbers
-  key_0: KEY_0
-  key_1: KEY_1
-  key_2: KEY_2
-  key_3: KEY_3
-  key_4: KEY_4
-  key_5: KEY_5
-  key_6: KEY_6
-  key_7: KEY_7
-  key_8: KEY_8
-  key_9: KEY_9
-
-
-
-  # Letters
-  key_a: KEY_A
-  key_b: KEY_B
-  key_c: KEY_C
-  key_d: KEY_D
-  key_e: KEY_E
-  key_f: KEY_F
-  key_g: KEY_G
-  key_h: KEY_H
-  key_i: KEY_I
-  key_j: KEY_J
-  key_k: KEY_K
-  key_l: KEY_L
-  key_m: KEY_M
-  key_n: KEY_N
-  key_o: KEY_O
-  key_p: KEY_P
-  key_q: KEY_Q
-  key_r: KEY_R
-  key_s: KEY_S
-  key_t: KEY_T
-  key_u: KEY_U
-  key_v: KEY_V
-  key_w: KEY_W
-  key_x: KEY_X
-  key_y: KEY_Y
-  key_z: KEY_Z
+  # Parameterized — send as key_code:0 … key_code:9, key_code:a … key_code:z
+  key_code: "KEY_{arg}"
 
   # Special characters
   space: KEY_SPACE
