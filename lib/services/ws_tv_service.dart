@@ -11,11 +11,6 @@ class WSTVService extends GenericTVService {
   bool _isConnected = false;
   String _clientKey = ''; // For LG TVs
 
-  @override
-  Function(String)? onStatusChanged;
-  @override
-  Function(bool)? onConnectionChanged;
-
   // WSTVService(this.config);
   WSTVService(super.config, {required super.appName});
 

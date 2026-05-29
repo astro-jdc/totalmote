@@ -9,11 +9,6 @@ class FakeTVService extends GenericTVService {
   final List<String> openedApps = [];
   bool _connected = false;
 
-  @override
-  Function(String)? onStatusChanged;
-  @override
-  Function(bool)? onConnectionChanged;
-
   FakeTVService(super.config, {required super.appName});
 
   @override
