@@ -4,10 +4,7 @@ import 'remote_button.dart';
 class DPadCard extends StatelessWidget {
   final Function(String) onSendKey;
 
-  const DPadCard({
-    super.key,
-    required this.onSendKey,
-  });
+  const DPadCard({super.key, required this.onSendKey});
 
   @override
   Widget build(BuildContext context) {

@@ -67,7 +67,9 @@ class TVConfigLoader {
       brands.sort();
       _cachedBrands = brands;
 
-      logger.i('Found ${brands.length} TV configuration(s): ${brands.join(", ")}');
+      logger.i(
+        'Found ${brands.length} TV configuration(s): ${brands.join(", ")}',
+      );
       return brands;
     } catch (e) {
       logger.e('Failed to load available brands', error: e);

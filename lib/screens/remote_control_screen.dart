@@ -14,7 +14,6 @@ import '../utils/app_preferences.dart';
 import 'yaml_viewer_screen.dart';
 import 'keyboard_screen.dart';
 
-
 class RemoteControlScreen extends StatefulWidget {
   const RemoteControlScreen({super.key});
 
@@ -101,8 +100,8 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
           title: const Text('Reconnect to Last TV?'),
           content: Text(
             'Would you like to reconnect to:\n\n'
-                'Brand: ${brand.toUpperCase()}\n'
-                'IP: $ip',
+            'Brand: ${brand.toUpperCase()}\n'
+            'IP: $ip',
           ),
           actions: [
             TextButton(
@@ -201,28 +200,29 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
           width: double.maxFinite,
           child: _discoveredTVs.isEmpty
               ? const Padding(
-            padding: EdgeInsets.all(20),
-            child: Text(
-                'No TVs found.\n\nMake sure your TV is on and connected to the same WiFi network.'),
-          )
+                  padding: EdgeInsets.all(20),
+                  child: Text(
+                    'No TVs found.\n\nMake sure your TV is on and connected to the same WiFi network.',
+                  ),
+                )
               : ListView.builder(
-            shrinkWrap: true,
-            itemCount: _discoveredTVs.length,
-            itemBuilder: (context, index) {
-              final tv = _discoveredTVs[index];
-              return ListTile(
-                leading: const Icon(Icons.tv, color: Colors.blue),
-                title: Text(tv.name),
-                subtitle: Text('${tv.ipAddress}:${tv.port}'),
-                trailing: const Icon(Icons.arrow_forward),
-                onTap: () {
-                  _ipController.text = tv.ipAddress;
-                  Navigator.pop(context);
-                  _connectToTV(tv.ipAddress);
-                },
-              );
-            },
-          ),
+                  shrinkWrap: true,
+                  itemCount: _discoveredTVs.length,
+                  itemBuilder: (context, index) {
+                    final tv = _discoveredTVs[index];
+                    return ListTile(
+                      leading: const Icon(Icons.tv, color: Colors.blue),
+                      title: Text(tv.name),
+                      subtitle: Text('${tv.ipAddress}:${tv.port}'),
+                      trailing: const Icon(Icons.arrow_forward),
+                      onTap: () {
+                        _ipController.text = tv.ipAddress;
+                        Navigator.pop(context);
+                        _connectToTV(tv.ipAddress);
+                      },
+                    );
+                  },
+                ),
         ),
         actions: [
           TextButton(
@@ -287,10 +287,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: Colors.orange,
-        ),
+        SnackBar(content: Text(e.toString()), backgroundColor: Colors.orange),
       );
     }
   }
@@ -475,7 +472,7 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.tv),
-                          hintText: 'Select TV Brand',  // Add hint
+                          hintText: 'Select TV Brand', // Add hint
                         ),
                         items: _availableBrands.map((brand) {
                           return DropdownMenuItem(
@@ -486,10 +483,10 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
                         onChanged: _isConnected
                             ? null
                             : (value) {
-                          if (value != null) {
-                            _onBrandChanged(value);
-                          }
-                        },
+                                if (value != null) {
+                                  _onBrandChanged(value);
+                                }
+                              },
                       ),
                   ],
                 ),
@@ -520,15 +517,14 @@ class _RemoteControlScreenState extends State<RemoteControlScreen> {
               child: ElevatedButton.icon(
                 onPressed: _isConnected
                     ? () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => KeyboardScreen(
-                        onSendKey: _sendKey,
-                      ),
-                    ),
-                  );
-                }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                KeyboardScreen(onSendKey: _sendKey),
+                          ),
+                        );
+                      }
                     : null,
                 icon: const Icon(Icons.keyboard),
                 label: const Text('Open Keyboard'),

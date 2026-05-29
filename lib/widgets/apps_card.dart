@@ -4,10 +4,7 @@ import 'remote_button.dart';
 class AppsCard extends StatelessWidget {
   final Function(String) onOpenApp;
 
-  const AppsCard({
-    super.key,
-    required this.onOpenApp,
-  });
+  const AppsCard({super.key, required this.onOpenApp});
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +18,7 @@ class AppsCard extends StatelessWidget {
           children: [
             const Text(
               'Streaming Apps',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             GridView.count(

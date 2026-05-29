@@ -48,7 +48,9 @@ class _YamlViewerScreenState extends State<YamlViewerScreen> {
     });
 
     try {
-      final content = await rootBundle.loadString('assets/${brand.toLowerCase().replaceAll(' ', '_')}.yaml');
+      final content = await rootBundle.loadString(
+        'assets/${brand.toLowerCase().replaceAll(' ', '_')}.yaml',
+      );
       setState(() {
         _yamlContent = content;
       });
@@ -78,7 +80,10 @@ class _YamlViewerScreenState extends State<YamlViewerScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.copy),
-            onPressed: _yamlContent.isNotEmpty && !_yamlContent.startsWith('Loading') && !_yamlContent.startsWith('Error')
+            onPressed:
+                _yamlContent.isNotEmpty &&
+                    !_yamlContent.startsWith('Loading') &&
+                    !_yamlContent.startsWith('Error')
                 ? _copyToClipboard
                 : null,
             tooltip: 'Copy to Clipboard',
@@ -102,27 +107,27 @@ class _YamlViewerScreenState extends State<YamlViewerScreen> {
                     child: _isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : DropdownButton<String>(
-                      value: _selectedBrand,
-                      isExpanded: true,
-                      underline: Container(),
-                      items: _availableBrands.map((brand) {
-                        return DropdownMenuItem(
-                          value: brand,
-                          child: Text(
-                            brand.toUpperCase(),
-                            style: const TextStyle(fontSize: 16),
+                            value: _selectedBrand,
+                            isExpanded: true,
+                            underline: Container(),
+                            items: _availableBrands.map((brand) {
+                              return DropdownMenuItem(
+                                value: brand,
+                                child: Text(
+                                  brand.toUpperCase(),
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                setState(() {
+                                  _selectedBrand = value;
+                                });
+                                _loadYamlFile(value);
+                              }
+                            },
                           ),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          setState(() {
-                            _selectedBrand = value;
-                          });
-                          _loadYamlFile(value);
-                        }
-                      },
-                    ),
                   ),
                 ],
               ),
@@ -138,17 +143,17 @@ class _YamlViewerScreenState extends State<YamlViewerScreen> {
               child: _yamlContent.isEmpty
                   ? const Center(child: Text('No content'))
                   : SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: SelectableText(
-                  _yamlContent,
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 13,
-                    height: 1.5,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+                      padding: const EdgeInsets.all(16),
+                      child: SelectableText(
+                        _yamlContent,
+                        style: const TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 13,
+                          height: 1.5,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
             ),
           ),
 

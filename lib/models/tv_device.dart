@@ -3,9 +3,5 @@ class TVDevice {
   final String ipAddress;
   final int port;
 
-  TVDevice({
-    required this.name,
-    required this.ipAddress,
-    this.port = 8001,
-  });
+  TVDevice({required this.name, required this.ipAddress, this.port = 8001});
 }

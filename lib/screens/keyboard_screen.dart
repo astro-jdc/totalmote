@@ -4,10 +4,7 @@ import '../widgets/keyboard_widget.dart';
 class KeyboardScreen extends StatelessWidget {
   final Function(String) onSendKey;
 
-  const KeyboardScreen({
-    super.key,
-    required this.onSendKey,
-  });
+  const KeyboardScreen({super.key, required this.onSendKey});
 
   void _handleKeyPress(String key) {
     onSendKey(key);
@@ -16,15 +13,11 @@ class KeyboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('On-Screen Keyboard'),
-      ),
+      appBar: AppBar(title: const Text('On-Screen Keyboard')),
       body: Column(
         children: [
           const Spacer(),
-          KeyboardWidget(
-            onKeyPress: _handleKeyPress,
-          ),
+          KeyboardWidget(onKeyPress: _handleKeyPress),
           const SizedBox(height: 16),
         ],
       ),

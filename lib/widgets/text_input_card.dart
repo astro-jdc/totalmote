@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class TextInputCard extends StatelessWidget {
   final VoidCallback onShowDialog;
 
-  const TextInputCard({
-    super.key,
-    required this.onShowDialog,
-  });
+  const TextInputCard({super.key, required this.onShowDialog});
 
   @override
   Widget build(BuildContext context) {

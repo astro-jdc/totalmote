@@ -42,7 +42,9 @@ class TVServiceFactory {
       // Cache it
       _serviceCache[brand] = service;
 
-      logger.i('Successfully created ${config.brand} TV service using ${config.protocol} protocol');
+      logger.i(
+        'Successfully created ${config.brand} TV service using ${config.protocol} protocol',
+      );
       return service;
     } catch (e) {
       logger.e('Failed to create TV service for $brand', error: e);

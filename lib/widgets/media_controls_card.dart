@@ -4,10 +4,7 @@ import 'remote_button.dart';
 class MediaControlsCard extends StatelessWidget {
   final Function(String) onSendKey;
 
-  const MediaControlsCard({
-    super.key,
-    required this.onSendKey,
-  });
+  const MediaControlsCard({super.key, required this.onSendKey});
 
   @override
   Widget build(BuildContext context) {

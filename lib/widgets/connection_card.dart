@@ -32,10 +32,7 @@ class ConnectionCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            IPAddressTextField(
-              controller: ipController,
-              enabled: !isConnected,
-            ),
+            IPAddressTextField(controller: ipController, enabled: !isConnected),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -47,7 +44,9 @@ class ConnectionCard extends StatelessWidget {
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white),
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
                           )
                         : const Icon(Icons.search),
                     label: Text(isScanning ? 'Scanning...' : 'Scan'),
